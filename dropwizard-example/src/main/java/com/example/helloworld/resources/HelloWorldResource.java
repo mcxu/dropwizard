@@ -24,11 +24,19 @@ import java.util.concurrent.atomic.AtomicLong;
 public class HelloWorldResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldResource.class);
 
-    private final Template template;
+    //private final Template template;
+    private final String template;
     private final AtomicLong counter;
+    private final String defaultName;
 
-    public HelloWorldResource(Template template) {
+    // public HelloWorldResource(Template template) {
+    //     this.template = template;
+    //     this.counter = new AtomicLong();
+    // }
+
+    public HelloWorldResource(String template, String defaultName) {
         this.template = template;
+        this.defaultName = defaultName;
         this.counter = new AtomicLong();
     }
 
@@ -37,7 +45,8 @@ public class HelloWorldResource {
     @Metered(name = "get-requests-metered")
     @CacheControl(maxAge = 1, maxAgeUnit = TimeUnit.DAYS)
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
-        return new Saying(counter.incrementAndGet(), template.render(name));
+        //return new Saying(counter.incrementAndGet(), template.render(name));
+        return new Saying(counter.incrementAndGet(), template);
     }
 
     @POST

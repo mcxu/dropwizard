@@ -14,6 +14,7 @@ import java.util.Map;
 public class HelloWorldConfiguration extends Configuration {
     @NotEmpty
     private String template;
+    //private Template template;
 
     @NotEmpty
     private String defaultName = "Stranger";
@@ -29,11 +30,18 @@ public class HelloWorldConfiguration extends Configuration {
     public String getTemplate() {
         return template;
     }
+    // @JsonProperty
+    // public Template getTemplate() {
+    //     return template;
+    // }
 
     @JsonProperty
     public void setTemplate(String template) {
         this.template = template;
     }
+    // public void setTemplate(Template template) {
+    //     this.template = template;
+    // }
 
     @JsonProperty
     public String getDefaultName() {

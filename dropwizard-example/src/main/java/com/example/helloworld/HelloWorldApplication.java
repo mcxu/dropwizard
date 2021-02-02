@@ -25,6 +25,7 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -80,24 +81,35 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
     @Override
     public void run(HelloWorldConfiguration configuration, Environment environment) {
-        final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
-        final Template template = configuration.buildTemplate();
+        // final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
+        // final Template template = configuration.buildTemplate();
 
-        environment.healthChecks().register("template", new TemplateHealthCheck(template));
-        environment.admin().addTask(new EchoTask());
-        environment.jersey().register(DateRequiredFeature.class);
-        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
-                .setAuthenticator(new ExampleAuthenticator())
-                .setAuthorizer(new ExampleAuthorizer())
-                .setRealm("SUPER SECRET STUFF")
-                .buildAuthFilter()));
-        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
-        environment.jersey().register(RolesAllowedDynamicFeature.class);
-        environment.jersey().register(new HelloWorldResource(template));
-        environment.jersey().register(new ViewResource());
-        environment.jersey().register(new ProtectedResource());
-        environment.jersey().register(new PeopleResource(dao));
-        environment.jersey().register(new PersonResource(dao));
-        environment.jersey().register(new FilteredResource());
+        // environment.healthChecks().register("template", new TemplateHealthCheck(template));
+        // environment.admin().addTask(new EchoTask());
+        // environment.jersey().register(DateRequiredFeature.class);
+        // environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
+        //         .setAuthenticator(new ExampleAuthenticator())
+        //         .setAuthorizer(new ExampleAuthorizer())
+        //         .setRealm("SUPER SECRET STUFF")
+        //         .buildAuthFilter()));
+        // environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
+        // environment.jersey().register(RolesAllowedDynamicFeature.class);
+        // environment.jersey().register(new HelloWorldResource(template));
+        // environment.jersey().register(new ViewResource());
+        // environment.jersey().register(new ProtectedResource());
+        // environment.jersey().register(new PeopleResource(dao));
+        // environment.jersey().register(new PersonResource(dao));
+        // environment.jersey().register(new FilteredResource());
+
+        //From tutorial: https://www.dropwizard.io/en/latest/getting-started.html
+        final HelloWorldResource resource = new HelloWorldResource(
+            configuration.getTemplate(), 
+            configuration.getDefaultName());
+        
+        final TemplateHealthCheck healthCheck = new TemplateHealthCheck(configuration.getTemplate());
+        environment.healthChecks().register("template", healthCheck);
+
+        JerseyEnvironment jerseyEnvironment = environment.jersey();
+        jerseyEnvironment.register(resource);
     }
 }
